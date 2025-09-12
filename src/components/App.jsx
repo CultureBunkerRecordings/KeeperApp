@@ -77,7 +77,7 @@ function App() {
   <div className="app-wrapper">
     {user ? (
       <>
-        <Header />
+        <Header isLogin= {!!user}/>
         <main>
           <CreateArea onAdd={addNote} />
           {notes.map((noteItem, index) => {

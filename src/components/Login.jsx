@@ -1,6 +1,7 @@
 // src/components/Login.js
 import React, { useState } from "react";
 import { auth } from "../firebase";
+import Header from "./Header";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -28,6 +29,7 @@ export default function Login() {
 
   return (
     <div className="login">
+    <Header />
       <h2>{isLogin ? "Login" : "Sign Up"}</h2>
       <input
         type="email"

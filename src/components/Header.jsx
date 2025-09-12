@@ -6,7 +6,7 @@ import { signOut } from "firebase/auth";
 import { ExitToApp } from "@material-ui/icons";
 
 
-function Header() {
+function Header(props) {
 
   function handleLogout() {
   signOut(auth)
@@ -27,7 +27,7 @@ function Header() {
         <HighlightIcon />
         Keeper
       </h1>
-      <button onClick={handleLogout}><ExitToApp /></button>
+      {props.isLogin ? <button onClick={handleLogout}><ExitToApp /></button> : null}
     </header>
   );
 }
