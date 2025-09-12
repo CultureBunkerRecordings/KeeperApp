@@ -114,6 +114,7 @@ form.create-note textarea {
 }
 
 form.create-note button {
+  -webkit-tap-highlight-color: transparent;
   position: static;
   margin-top: 10px;
   display: block;

@@ -55,7 +55,7 @@ function CreateArea(props) {
           rows={isClicked ? "3" : "1"}
         />
         <Zoom in={isClicked}>
-          <Fab onClick={submitNote}>
+          <Fab onClick={submitNote} disableRipple>
             <AddIcon />
           </Fab>
         </Zoom>
