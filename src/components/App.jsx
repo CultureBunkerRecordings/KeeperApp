@@ -95,7 +95,10 @@ function App() {
         <Footer />
       </>
     ) : (
+      <>
+      <Header />
       <Login />
+      </>
     )}
   </div>
 );

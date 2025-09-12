@@ -33,7 +33,7 @@ body {
 /* Header */
 header {
   background-color: #f5ba13;
-  margin: 0 auto;
+  margin: 0;
   padding: 16px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
 }
@@ -149,3 +149,12 @@ form.create-note button {
   cursor: pointer;
   outline: none;
 }
+
+.login {
+  display: grid;
+  gap: 12px;             /* space between children */
+  max-width: 400px;      
+  margin: 0 auto;        
+  padding: 20px;
+}
+
