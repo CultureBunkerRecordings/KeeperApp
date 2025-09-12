@@ -1,17 +1,36 @@
+/* ✅ Base Reset */
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
-html {
+
+html, body {
+  height: 100%; /* ✅ Needed for flex layout */
   font-family: "Montserrat", sans-serif;
 }
+
+/* ✅ New: App Wrapper for full-height flex layout */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ✅ New: Main takes available space to push footer down */
+main {
+  flex: 1;
+}
+
+/* ✅ Optional: Prevent horizontal scroll */
 body {
   background: #eee;
   background-image: url("https://www.transparenttextures.com/patterns/diagmonds-light.png");
   padding: 0 16px;
+  overflow-x: hidden;
 }
 
+/* Header */
 header {
   background-color: #f5ba13;
   margin: 0 auto;
@@ -25,17 +44,19 @@ header h1 {
   font-weight: 200;
 }
 
+/* ✅ Updated Footer: Remove absolute positioning */
 footer {
-  position: absolute;
   text-align: center;
-  bottom: 0;
   width: 100%;
   height: 2.5rem;
+  margin-top: auto; /* ✅ Push footer to bottom */
 }
 
 footer p {
   color: #ccc;
 }
+
+/* Notes */
 .note {
   background: #fff;
   border-radius: 7px;
@@ -45,10 +66,12 @@ footer p {
   margin: 16px;
   float: left;
 }
+
 .note h1 {
   font-size: 1.1em;
   margin-bottom: 6px;
 }
+
 .note p {
   font-size: 1.1em;
   margin-bottom: 10px;
@@ -68,6 +91,7 @@ footer p {
   outline: none;
 }
 
+/* Create Note Form */
 form.create-note {
   width: 100%;
   max-width: 480px;
@@ -88,6 +112,7 @@ form.create-note textarea {
   font-family: inherit;
   resize: none;
 }
+
 form.create-note button {
   position: static;
   margin-top: 10px;

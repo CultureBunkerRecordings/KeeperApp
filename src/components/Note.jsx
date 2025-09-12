@@ -2,7 +2,8 @@ import React from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 function Note(props) {
-  function handleClick() {
+  function handleClick(event) {
+    event.preventDefault();
     props.onDelete(props.id);
   }
 
