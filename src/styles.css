@@ -44,6 +44,26 @@ header h1 {
   font-weight: 200;
 }
 
+header button {
+  display: flex;              /* make it a flex container */
+  align-items: center;        /* center vertically */
+  justify-content: center;    /* center horizontally */
+  
+  background-color: #f5ba13;
+  color: #fff;
+  border: none;               /* optional: cleaner look */
+  border-radius: 4px;         /* small rounding */
+  cursor: pointer;
+
+  height: 32px;               /* control size relative to header */
+  width: 32px;                /* make it a square */
+  padding: 0;                 /* remove extra padding */
+}
+
+header button svg {
+  font-size: 18px;            /* scale the LogoutIcon */
+}
+
 /* ✅ Updated Footer: Remove absolute positioning */
 footer {
   text-align: center;
