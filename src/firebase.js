@@ -21,8 +21,11 @@ export const functions = getFunctions(app)
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
+if (window.location.hostname === "localhost") {
+  connectFunctionsEmulator(functions, "localhost", 5001);
+}
 // Initialize App Check (ReCaptcha V3)
 initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider("6LfSfsgrAAAAAPBstSmtNJfdscKhH6Ckh5KpAdfR"), // replace with your site key
+  provider: new ReCaptchaV3Provider("6LegwMgrAAAAAEvFvQww_etqbxeNL1qTH0BNW62D"), // replace with your site key
   isTokenAutoRefreshEnabled: true,
 });
