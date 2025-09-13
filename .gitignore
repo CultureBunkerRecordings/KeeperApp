@@ -1,3 +1,34 @@
+# Node modules
 node_modules/
+functions/node_modules/
+
+# Build output
 build/
+.next/
+functions/lib/
+functions/dist/
+
+# Local environment variables (never commit secrets!)
 .env
+functions/.env
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel/
+.vercel_build_output/
+
+# Firebase emulators and cache
+.firebase/
+.firestore/
+storage/
+functions/serviceAccountKey.json
