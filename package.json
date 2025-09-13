@@ -4,6 +4,8 @@
   "description": "",
   "keywords": [],
   "main": "src/index.js",
+  "type": "module",
+
   "dependencies": {
     "@material-ui/core": "4.12.4",
     "@material-ui/icons": "4.11.3",
@@ -13,14 +15,15 @@
     "react-scripts": "^3.2.0"
   },
   "devDependencies": {
+    "cross-env": "^10.0.0",
     "typescript": "3.3.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  },
+  "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+  "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
+  "test": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts test",
+  "eject": "react-scripts eject"
+},
   "browserslist": [
     ">0.2%",
     "not dead",

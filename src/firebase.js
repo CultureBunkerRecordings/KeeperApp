@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 // Replace this with your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCl1mhz21ujWZsWN-sZgKJA0541LuySs34",
@@ -14,8 +14,13 @@ const firebaseConfig = {
   measurementId: "G-QHQ7XC8FMX"
 };
 
-const app = initializeApp(firebaseConfig);
-
+export const app = initializeApp(firebaseConfig);
+export const functions = getFunctions(app)
 // Services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// If running locally, connect to emulator:
+if (window.location.hostname === "localhost") {
+  connectFunctionsEmulator(functions, "localhost", 5001);
+}

@@ -158,3 +158,15 @@ form.create-note button {
   padding: 20px;
 }
 
+.recommendations {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 8px;
+}
+
+.recommendations li {
+  background: #fff8e1;
+  margin-bottom: 4px;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
