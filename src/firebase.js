@@ -20,7 +20,8 @@ export const functions = getFunctions(app)
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// If running locally, connect to emulator:
-if (window.location.hostname === "localhost") {
-  connectFunctionsEmulator(functions, "localhost", 5001);
-}
+// Initialize App Check (ReCaptcha V3)
+initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider("6LfSfsgrAAAAAPBstSmtNJfdscKhH6Ckh5KpAdfR"), // replace with your site key
+  isTokenAutoRefreshEnabled: true,
+});
