@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 // Replace this with your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCl1mhz21ujWZsWN-sZgKJA0541LuySs34",
