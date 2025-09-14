@@ -11,7 +11,7 @@ const db = admin.firestore();
 const app = express();
 
 // Allow your frontend domain and localhost
-app.use(cors({ origin: ["https://your-vercel-domain.vercel.app", "http://localhost:3000"] }));
+app.use(cors({ origin: ["https://culturebunker-keeper.vercel.app", "http://localhost:3000"] }));
 app.use(express.json()); // parse JSON body
 
 function cosineSimilarity(a, b) {
