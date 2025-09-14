@@ -18,7 +18,7 @@ exports.getRecommendations = onCall(
   { secrets: ["OPENAI_API_KEY"], enforceAppCheck: true },
   async (data, context) => {
 
-    const isEmulator = process.env.FUNCTIONS_EMULATOR === "true";
+    const isEmulator = process.env.FUNCTIONS_EMULATOR === "false";
 
     if (!context.auth && !isEmulator) {
       throw new functions.https.HttpsError(

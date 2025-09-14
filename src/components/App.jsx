@@ -75,7 +75,7 @@ function App() {
   async function fetchRecommendations(note) {
     if (!user) return;
 
-    const functions = getFunctions(app);
+    const functions = getFunctions(app, "europe-west1");
     const getRecs = httpsCallable(functions, "getRecommendations");
 
     try {
