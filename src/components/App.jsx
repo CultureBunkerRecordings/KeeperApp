@@ -79,7 +79,7 @@ function App() {
     if (!note.content || !note.content.trim()) return;
 
     const res = await fetch(
-      "https://us-central1-keeper-app-2b447.cloudfunctions.net/getRecommendations",
+      "https://getrecommendations-nftaixke4a-uc.a.run.app",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
