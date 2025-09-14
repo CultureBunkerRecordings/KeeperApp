@@ -15,7 +15,7 @@ function cosineSimilarity(a, b) {
 }
 
 exports.getRecommendations = onCall(
-  { secrets: ["OPENAI_API_KEY"], enforceAppCheck: true },
+  { secrets: ["OPENAI_API_KEY"], enforceAppCheck: false },
   async (data, context) => {
 
     const isEmulator = process.env.FUNCTIONS_EMULATOR === "true";
