@@ -15,10 +15,10 @@ function cosineSimilarity(a, b) {
 }
 
 exports.getRecommendations = onCall(
-  { secrets: ["OPENAI_API_KEY"], enforceAppCheck: true },
+  { secrets: ["OPENAI_API_KEY"], enforceAppCheck: false },
   async (data, context) => {
 
-    const isEmulator = process.env.FUNCTIONS_EMULATOR === "false";
+    const isEmulator = process.env.FUNCTIONS_EMULATOR === "true";
 
     if (!context.auth && !isEmulator) {
       throw new functions.https.HttpsError(
