@@ -1,10 +1,9 @@
-// src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
-// Replace this with your Firebase config
+
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCl1mhz21ujWZsWN-sZgKJA0541LuySs34",
   authDomain: "keeper-app-2b447.firebaseapp.com",
@@ -15,18 +14,17 @@ const firebaseConfig = {
   measurementId: "G-QHQ7XC8FMX"
 };
 
+// Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-// Initialize App Check (ReCaptcha V3)
+
+// Initialize App Check (optional for now)
 initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider("6LegwMgrAAAAAEvFvQww_etqbxeNL1qTH0BNW62D"), // replace with your site key
+  provider: new ReCaptchaV3Provider("6LegwMgrAAAAAEvFvQww_etqbxeNL1qTH0BNW62D"), // your site key
   isTokenAutoRefreshEnabled: true,
 });
 
-export const functions = getFunctions(app, 'us-central1')
 // Services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-if (window.location.hostname === "localhost") {
-  connectFunctionsEmulator(functions, "localhost", 5001);
-}
+// No need to initialize functions or emulator connection anymore

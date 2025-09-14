@@ -73,22 +73,28 @@ function App() {
   }
 
   async function fetchRecommendations(note) {
-    if (!user) return;
+  if (!user) return;
 
-    const functions = getFunctions(app, "us-central1");
-    const getRecs = httpsCallable(functions, "getRecommendations");
+  try {
+    if (!note.content || !note.content.trim()) return;
 
-    try {
-      console.log(note.content);
-      if (!note.content || !note.content.trim()) return; // skip notes with empty content
+    const res = await fetch(
+      "https://us-central1-keeper-app-2b447.cloudfunctions.net/getRecommendations",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: note.content }),
+      }
+    );
 
-      const res = await getRecs({ content: note.content });
-      // store by note ID
-      setRecommendations(prev => ({ ...prev, [note.id]: res.data }));
-    } catch (err) {
-      console.error("Error fetching recommendations:", err);
-    }
+    if (!res.ok) throw new Error(`Error: ${res.status}`);
+    const data = await res.json();
+
+    setRecommendations(prev => ({ ...prev, [note.id]: data }));
+  } catch (err) {
+    console.error("Error fetching recommendations:", err);
   }
+}
 
   function toggleRecommendations(note) {
     const isExpanded = expandedNotes[note.id];
