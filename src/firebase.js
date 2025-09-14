@@ -15,14 +15,14 @@ const firebaseConfig = {
   measurementId: "G-QHQ7XC8FMX"
 };
 
+export const app = initializeApp(firebaseConfig);
 // Initialize App Check (ReCaptcha V3)
 initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider("6LegwMgrAAAAAEvFvQww_etqbxeNL1qTH0BNW62D"), // replace with your site key
   isTokenAutoRefreshEnabled: true,
 });
 
-export const app = initializeApp(firebaseConfig);
-export const functions = getFunctions(app)
+export const functions = getFunctions(app, 'us-central1')
 // Services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
