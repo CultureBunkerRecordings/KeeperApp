@@ -73,13 +73,20 @@ app.post("/", async (req, res) => {
     }));
 
     // 7️⃣ Apply similarity threshold and return top 5
-    const THRESHOLD = 0.40;
-    const top5 = scoredResources
-      .filter(r => r.similarity >= THRESHOLD)
-      .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, 5);
+const THRESHOLD = 0.40;
+const top5 = scoredResources
+  .filter(r => r.similarity >= THRESHOLD)
+  .sort((a, b) => b.similarity - a.similarity)
+  .slice(0, 5);
 
-    res.json(top5);
+// Only return title and description
+const top5Data = top5.map(r => ({
+  title: r.title,
+  description: r.description,
+  url: r.url
+}));
+
+res.json(top5Data);
 
   } catch (err) {
     console.error(err);
