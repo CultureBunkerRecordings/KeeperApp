@@ -138,17 +138,21 @@ function App() {
                     : "Show Recommendations"}
                 </button>
 
-                {expandedNotes[noteItem.id] &&
-                  recommendations[noteItem.id] &&
-                  recommendations[noteItem.id].length > 0 && (
-                    <ul className="recommendations">
-                      {recommendations[noteItem.id].map((rec) => (
-                        <li key={rec.id}>
-                          <strong>{rec.title}</strong>: {rec.description}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                {expandedNotes[noteItem.id] && recommendations[noteItem.id] && (
+                  <>
+                    {recommendations[noteItem.id].length > 0 ? (
+                      <ul className="recommendations">
+                        {recommendations[noteItem.id].map((rec) => (
+                          <li key={rec.id}>
+                            <strong>{rec.title}</strong>: {rec.description}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="no-recommendations">No recommendations found.</p>
+                    )}
+                  </>
+                )}
               </div>
             ))}
           </main>
