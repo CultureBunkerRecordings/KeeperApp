@@ -73,7 +73,7 @@ app.post("/", async (req, res) => {
     }));
 
     // 7️⃣ Apply threshold and return top 5
-    const THRESHOLD = 0.65;
+    const THRESHOLD = 0.40;
     const top5 = scoredResources
       .filter(r => r.similarity >= THRESHOLD)
       .sort((a, b) => b.similarity - a.similarity)
