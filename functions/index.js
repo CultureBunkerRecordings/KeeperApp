@@ -22,6 +22,13 @@ function cosineSimilarity(a, b) {
   return dot / (normA * normB);
 }
 
+function trimDescription(text, maxWords = 50) {
+  if (!text) return "";
+  const words = text.split(/\s+/);       // split by whitespace
+  if (words.length <= maxWords) return text;
+  return words.slice(0, maxWords).join(" ") + "..."; // append ellipsis
+}
+
 // Simple keyword extraction
 function extractKeywords(text) {
   return text
@@ -73,7 +80,7 @@ app.post("/", async (req, res) => {
     }));
 
     // 7️⃣ Apply similarity threshold and return top 5
-const THRESHOLD = 0.40;
+const THRESHOLD = 0.50;
 const top5 = scoredResources
   .filter(r => r.similarity >= THRESHOLD)
   .sort((a, b) => b.similarity - a.similarity)
@@ -82,8 +89,7 @@ const top5 = scoredResources
 // Only return title and description
 const top5Data = top5.map(r => ({
   title: r.title,
-  description: r.description,
-  url: r.url
+  description: trimDescription(r.description, 50),
 }));
 
 res.json(top5Data);
