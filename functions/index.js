@@ -10,9 +10,9 @@ const db = admin.firestore();
 
 const app = express();
 
-// Allow your frontend domain and localhost
+// Allow frontend domains
 app.use(cors({ origin: ["https://culturebunker-keeper.vercel.app", "http://localhost:3000"] }));
-app.use(express.json()); // parse JSON body
+app.use(express.json());
 
 // Cosine similarity function
 function cosineSimilarity(a, b) {
@@ -22,7 +22,7 @@ function cosineSimilarity(a, b) {
   return dot / (normA * normB);
 }
 
-// Keyword extraction
+// Simple keyword extraction
 function extractKeywords(text) {
   return text
     .toLowerCase()
@@ -38,41 +38,41 @@ app.post("/", async (req, res) => {
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     console.log("OPENAI_API_KEY exists?", !!process.env.OPENAI_API_KEY);
 
-    // 1️⃣ Get resources from Firestore
+    // 1️⃣ Get all resources from Firestore
     const resourcesSnap = await db.collection("resources").get();
     const resources = resourcesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    // 2️⃣ Extract keywords from note
+    // 2️⃣ Extract keywords from the note
     const keywords = extractKeywords(content);
 
-    // 3️⃣ Filter resources by keywords
+    // 3️⃣ Filter resources by keywords without modifying title/description
     const filteredResources = resources.filter(r => {
-      const text = (r.title + " " + r.description).toLowerCase();
-      return keywords.some(kw => text.includes(kw));
+      const combinedText = `${r.title} ${r.description}`.toLowerCase();
+      return keywords.some(kw => combinedText.includes(kw));
     });
 
     console.log(`Filtered from ${resources.length} → ${filteredResources.length} resources`);
 
-    // 4️⃣ Only proceed if we have at least 5 keyword-matching resources
+    // 4️⃣ Skip embeddings if less than 5 matches
     if (filteredResources.length < 5) {
       console.log("Not enough keyword matches, skipping embeddings.");
-      return res.json([]); // or return a message if you prefer
+      return res.json([]); // Frontend can show a "no results" message
     }
 
-    // 5️⃣ Generate embedding for the note
+    // 5️⃣ Generate embedding for the user's note
     const embeddingRes = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input: content,
     });
     const noteEmbedding = embeddingRes.data[0].embedding;
 
-    // 6️⃣ Compute cosine similarity
+    // 6️⃣ Compute cosine similarity for filtered resources
     const scoredResources = filteredResources.map(r => ({
-      ...r,
+      ...r, // keep full title, description, and URL
       similarity: cosineSimilarity(noteEmbedding, r.embedding),
     }));
 
-    // 7️⃣ Apply threshold and return top 5
+    // 7️⃣ Apply similarity threshold and return top 5
     const THRESHOLD = 0.40;
     const top5 = scoredResources
       .filter(r => r.similarity >= THRESHOLD)
