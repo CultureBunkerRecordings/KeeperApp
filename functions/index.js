@@ -44,47 +44,53 @@ app.post("/", async (req, res) => {
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    // 1️⃣ Fetch all resources but only lightweight fields (title, description, embedding)
+    // 1️⃣ Fetch all resources (lightweight fields + tagEmbeddings)
     const resourcesSnap = await db.collection("resources").get();
     const resources = resourcesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    // 2️⃣ Extract keywords from note
+    // 2️⃣ Extract keywords from the note
     const keywords = extractKeywords(content);
 
-    // 3️⃣ Filter by keywords
-    const filteredResources = resources.filter(r => {
-      const combinedText = `${r.title} ${r.description}`.toLowerCase();
-      return keywords.some(kw => combinedText.includes(kw));
+    // 3️⃣ Embed keywords/tags for filtering
+    const tagString = keywords.join(" "); // combine keywords into a string
+    const tagEmbeddingRes = await openai.embeddings.create({
+      model: "text-embedding-3-small",
+      input: tagString,
+    });
+    const noteTagEmbedding = tagEmbeddingRes.data[0].embedding;
+
+    // 4️⃣ Filter by tag similarity first
+    const TAG_THRESHOLD = 0.6;
+    const tagFilteredResources = resources.filter(r => {
+      if (!r.tagEmbeddings) return false;
+      const sim = cosineSimilarity(noteTagEmbedding, r.tagEmbeddings);
+      return sim >= TAG_THRESHOLD;
     });
 
-    console.log(`Filtered from ${resources.length} → ${filteredResources.length} resources`);
+    console.log(`Filtered by tags: ${tagFilteredResources.length} resources`);
 
-    // 4️⃣ Skip if too few matches
-    if (filteredResources.length < 5) {
-      console.log("Not enough keyword matches, skipping embeddings.");
-      return res.json([]);
-    }
+    if (tagFilteredResources.length < 5) return res.json([]);
 
-    // 5️⃣ Take a random batch of up to 500
-    const batch = shuffleArray(filteredResources).slice(0, 500);
+    // 5️⃣ Take a random batch for content similarity
+    const batch = shuffleArray(tagFilteredResources).slice(0, 500);
 
-    // 6️⃣ Generate embedding for the note
+    // 6️⃣ Generate embedding for the content
     const embeddingRes = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input: content,
     });
     const noteEmbedding = embeddingRes.data[0].embedding;
 
-    // 7️⃣ Compute cosine similarity for the batch
+    // 7️⃣ Compute content similarity
     const scoredResources = batch.map(r => ({
       ...r,
       similarity: cosineSimilarity(noteEmbedding, r.embedding),
     }));
 
-    // 8️⃣ Filter by threshold, sort, slice top 5
-    const THRESHOLD = 0.50;
+    // 8️⃣ Filter by content similarity threshold, sort, slice top 5
+    const CONTENT_THRESHOLD = 0.5;
     const top5 = scoredResources
-      .filter(r => r.similarity >= THRESHOLD)
+      .filter(r => r.similarity >= CONTENT_THRESHOLD)
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, 5);
 
