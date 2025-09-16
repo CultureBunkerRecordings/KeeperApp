@@ -27,12 +27,17 @@ function trimDescription(text, maxWords = 50) {
   return words.length <= maxWords ? text : words.slice(0, maxWords).join(" ") + "...";
 }
 
+// Extract keywords
+function extractKeywords(text) {
+  return text.toLowerCase().split(/\W+/).filter(word => word.length > 2);
+}
+
 // Shuffle array
 function shuffleArray(array) {
   return array.sort(() => 0.5 - Math.random());
 }
 
-// Compute similarity for batch
+// Batch cosine similarity computation
 function computeBatchSimilarity(batch, noteEmbedding) {
   return batch.map(r => ({
     ...r,
@@ -47,49 +52,46 @@ app.post("/", async (req, res) => {
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    // 1️⃣ Generate embedding for the note content once
+    // 1️⃣ Extract keywords from note
+    const keywords = extractKeywords(content);
+    if (keywords.length === 0) return res.json([]);
+
+    // 2️⃣ Use Firestore array-contains-any to prefilter by tags
+    const MAX_TAGS_QUERY = 10; // Firestore limit for array-contains-any
+    const matchingTags = keywords.slice(0, MAX_TAGS_QUERY);
+
+    const tagFilteredSnap = await db.collection("resources")
+      .where("tags", "array-contains-any", matchingTags)
+      .limit(1000) // limit to reduce memory usage
+      .get();
+
+    const tagFilteredResources = tagFilteredSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    console.log(`Prefiltered by tags: ${tagFilteredResources.length} resources`);
+
+    if (tagFilteredResources.length < 5) return res.json([]);
+
+    // 3️⃣ Generate embedding for the note content
     const embeddingRes = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input: content,
     });
     const noteEmbedding = embeddingRes.data[0].embedding;
 
-    // 2️⃣ Fetch a limited set of resources (avoid loading everything)
-    const resourcesSnap = await db.collection("resources").limit(1000).get();
-    const resources = resourcesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    console.log(`Fetched ${resources.length} resources from Firestore`);
-
-    // 3️⃣ Filter by semantic tag similarity
-    const TAG_THRESHOLD = 0.4;
-    const tagFilteredResources = resources.filter(r => {
-      if (!r.tagEmbeddings) return false;
-      const sim = cosineSimilarity(noteEmbedding, r.tagEmbeddings);
-      return sim >= TAG_THRESHOLD;
-    });
-
-    console.log(`Tag-filtered resources: ${tagFilteredResources.length}`);
-
-    if (tagFilteredResources.length < 5) {
-      return res.json([]); // not enough results
-    }
-
-    // 4️⃣ Randomly sample up to 500 docs for content similarity
-    const batch = shuffleArray(tagFilteredResources).slice(0, 500);
-
-    // 5️⃣ Compute content similarity in chunks
+    // 4️⃣ Compute content similarity in batches
     const BATCH_SIZE = 100;
     let topResults = [];
-    const CONTENT_THRESHOLD = 0.3;
 
-    for (let i = 0; i < batch.length; i += BATCH_SIZE) {
-      const subBatch = batch.slice(i, i + BATCH_SIZE);
-      const scoredBatch = computeBatchSimilarity(subBatch, noteEmbedding);
+    const threshold = 0.3;
 
-      topResults.push(...scoredBatch.filter(r => r.similarity >= CONTENT_THRESHOLD));
+    for (let i = 0; i < tagFilteredResources.length; i += BATCH_SIZE) {
+      const batch = tagFilteredResources.slice(i, i + BATCH_SIZE);
+      const scoredBatch = computeBatchSimilarity(batch, noteEmbedding);
+
+      // Keep only above threshold
+      topResults.push(...scoredBatch.filter(r => r.similarity >= threshold));
     }
 
-    // 6️⃣ Sort and take top 5
+    // 5️⃣ Sort by similarity and take top 5
     const top5 = topResults
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, 5);
@@ -103,7 +105,7 @@ app.post("/", async (req, res) => {
     res.json(top5Data);
 
   } catch (err) {
-    console.error("❌ Error in recommendations:", err);
+    console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
