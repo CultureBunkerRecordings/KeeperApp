@@ -2,13 +2,20 @@ import React from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 function Note(props) {
+  // Delete note handler
   function handleDelete(event) {
     event.preventDefault();
     props.onDelete(props.id);
   }
 
+  // Toggle recommendations handler
   function handleToggle() {
-    props.onToggleRecommendations(props.id);
+    // Pass the whole note object to the handler if needed
+    props.onToggleRecommendations({
+      id: props.id,
+      title: props.title,
+      content: props.content,
+    });
   }
 
   return (
