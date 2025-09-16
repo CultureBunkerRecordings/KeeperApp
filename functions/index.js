@@ -97,6 +97,7 @@ app.post("/", async (req, res) => {
     const top5Data = top5.map(r => ({
       title: r.title,
       description: trimDescription(r.description, 50),
+      url: r.url,
     }));
 
     res.json(top5Data);

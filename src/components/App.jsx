@@ -74,14 +74,13 @@ function App() {
 
   // Fetch recommendations from Cloud Run
   async function fetchRecommendations(note) {
-    if (!user || !note.content || !note.content.trim()) return;
+    if (!user || !note.content?.trim()) return;
 
-    // Avoid refetching if already fetched
-    if (recommendations[note.id]) return;
+    if (recommendations[note.id]) return; // avoid refetch
 
     try {
       const res = await fetch(
-        "https://getrecommendations-nftaixke4a-uc.a.run.app", // your Cloud Run URL
+        "https://getrecommendations-nftaixke4a-uc.a.run.app",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -121,39 +120,16 @@ function App() {
           <main>
             <CreateArea onAdd={addNote} />
             {notes.map((noteItem) => (
-              <div key={noteItem.id}>
-                <Note
-                  id={noteItem.id}
-                  title={noteItem.title}
-                  content={noteItem.content}
-                  onDelete={deleteNote}
-                />
-
-                <button
-                  onClick={() => toggleRecommendations(noteItem)}
-                  className="toggle-recommendations-btn"
-                >
-                  {expandedNotes[noteItem.id]
-                    ? "Hide Recommendations"
-                    : "Show Recommendations"}
-                </button>
-
-                {expandedNotes[noteItem.id] && recommendations[noteItem.id] && (
-                  <>
-                    {recommendations[noteItem.id].length > 0 ? (
-                      <ul className="recommendations">
-                        {recommendations[noteItem.id].map((rec) => (
-                          <li key={rec.id}>
-                            <strong>{rec.title}</strong>: {rec.description}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="no-recommendations">No recommendations found.</p>
-                    )}
-                  </>
-                )}
-              </div>
+              <Note
+                key={noteItem.id}
+                id={noteItem.id}
+                title={noteItem.title}
+                content={noteItem.content}
+                onDelete={deleteNote}
+                onToggleRecommendations={toggleRecommendations}
+                isExpanded={!!expandedNotes[noteItem.id]}
+                recommendations={recommendations[noteItem.id] || []}
+              />
             ))}
           </main>
           <Footer />
