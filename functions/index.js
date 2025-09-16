@@ -81,12 +81,14 @@ app.post("/", async (req, res) => {
     const BATCH_SIZE = 100;
     let topResults = [];
 
+    const threshold = 0.3;
+
     for (let i = 0; i < tagFilteredResources.length; i += BATCH_SIZE) {
       const batch = tagFilteredResources.slice(i, i + BATCH_SIZE);
       const scoredBatch = computeBatchSimilarity(batch, noteEmbedding);
 
       // Keep only above threshold
-      topResults.push(...scoredBatch.filter(r => r.similarity >= 0.5));
+      topResults.push(...scoredBatch.filter(r => r.similarity >= threshold));
     }
 
     // 5️⃣ Sort by similarity and take top 5
