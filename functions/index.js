@@ -37,6 +37,14 @@ function shuffleArray(array) {
   return array.sort(() => 0.5 - Math.random());
 }
 
+// Batch cosine similarity computation
+function computeBatchSimilarity(batch, noteEmbedding) {
+  return batch.map(r => ({
+    ...r,
+    similarity: cosineSimilarity(noteEmbedding, r.embedding),
+  }));
+}
+
 app.post("/", async (req, res) => {
   try {
     const content = (req.body.content || "").trim();
@@ -44,57 +52,48 @@ app.post("/", async (req, res) => {
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    // 1️⃣ Fetch all resources (lightweight fields + tagEmbeddings)
-    const resourcesSnap = await db.collection("resources").get();
-    const resources = resourcesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    // 2️⃣ Extract keywords from the note
+    // 1️⃣ Extract keywords from note
     const keywords = extractKeywords(content);
+    if (keywords.length === 0) return res.json([]);
 
-    // 3️⃣ Embed keywords/tags for filtering
-    const tagString = keywords.join(" "); // combine keywords into a string
-    const tagEmbeddingRes = await openai.embeddings.create({
-      model: "text-embedding-3-small",
-      input: tagString,
-    });
-    const noteTagEmbedding = tagEmbeddingRes.data[0].embedding;
+    // 2️⃣ Use Firestore array-contains-any to prefilter by tags
+    const MAX_TAGS_QUERY = 10; // Firestore limit for array-contains-any
+    const matchingTags = keywords.slice(0, MAX_TAGS_QUERY);
 
-    // 4️⃣ Filter by tag similarity first
-    const TAG_THRESHOLD = 0.6;
-    const tagFilteredResources = resources.filter(r => {
-      if (!r.tagEmbeddings) return false;
-      const sim = cosineSimilarity(noteTagEmbedding, r.tagEmbeddings);
-      return sim >= TAG_THRESHOLD;
-    });
+    const tagFilteredSnap = await db.collection("resources")
+      .where("tags", "array-contains-any", matchingTags)
+      .limit(1000) // limit to reduce memory usage
+      .get();
 
-    console.log(`Filtered by tags: ${tagFilteredResources.length} resources`);
+    const tagFilteredResources = tagFilteredSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    console.log(`Prefiltered by tags: ${tagFilteredResources.length} resources`);
 
     if (tagFilteredResources.length < 5) return res.json([]);
 
-    // 5️⃣ Take a random batch for content similarity
-    const batch = shuffleArray(tagFilteredResources).slice(0, 500);
-
-    // 6️⃣ Generate embedding for the content
+    // 3️⃣ Generate embedding for the note content
     const embeddingRes = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input: content,
     });
     const noteEmbedding = embeddingRes.data[0].embedding;
 
-    // 7️⃣ Compute content similarity
-    const scoredResources = batch.map(r => ({
-      ...r,
-      similarity: cosineSimilarity(noteEmbedding, r.embedding),
-    }));
+    // 4️⃣ Compute content similarity in batches
+    const BATCH_SIZE = 100;
+    let topResults = [];
 
-    // 8️⃣ Filter by content similarity threshold, sort, slice top 5
-    const CONTENT_THRESHOLD = 0.5;
-    const top5 = scoredResources
-      .filter(r => r.similarity >= CONTENT_THRESHOLD)
+    for (let i = 0; i < tagFilteredResources.length; i += BATCH_SIZE) {
+      const batch = tagFilteredResources.slice(i, i + BATCH_SIZE);
+      const scoredBatch = computeBatchSimilarity(batch, noteEmbedding);
+
+      // Keep only above threshold
+      topResults.push(...scoredBatch.filter(r => r.similarity >= 0.5));
+    }
+
+    // 5️⃣ Sort by similarity and take top 5
+    const top5 = topResults
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, 5);
 
-    // 9️⃣ Return only title and trimmed description
     const top5Data = top5.map(r => ({
       title: r.title,
       description: trimDescription(r.description, 50),
