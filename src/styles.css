@@ -99,43 +99,39 @@ footer p {
   word-wrap: break-word;
 }
 
+.note .note-buttons {
+  display: flex;           /* place buttons in a row */
+  justify-content: flex-end; /* align to the right */
+  gap: 8px;                /* spacing between delete + recommendations */
+  margin-bottom: 6px;      /* small spacing from title/content if needed */
+}
+
 .note button {
-  position: relative;
-  float: right;
-  margin-right: 10px;
   color: #f5ba13;
   border: none;
-  width: 36px;
-  height: 36px;
   cursor: pointer;
   outline: none;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;          /* prevent shrinking in flex container */
+  background: transparent;  /* keep button background same as before */
 }
 
 .note button.recommendations {
-  position: relative;
-  float: right;
-  margin-right: 10px;
-  color: #f5ba13;
-  border: none;
-  cursor: pointer;
-  outline: none;
-
-  /* Make it bigger to fit text nicely */
-  min-width: 120px;       /* enough for "Show Recommendations" */
-  height: auto;           /* let height grow if needed */
-  padding: 6px 12px;      /* inner spacing for readability */
-  font-size: 0.85rem;     /* slightly smaller text to fit */
-  line-height: 1.2;       /* tighter line spacing */
-  text-align: center;     
-  white-space: normal;    /* allow wrapping to new line */
-  border-radius: 6px;     /* keep some rounded corners */
-  background-color: transparent; /* keep original style transparent */
+  min-width: 120px;
+  height: auto;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;    /* allow wrapping */
+  border-radius: 6px;
+  background-color: transparent;
 }
 
 .note button.recommendations:hover {
-  color: #f7c74d;         /* slightly lighter on hover */
+  color: #f7c74d;
 }
-
 
 /* Create Note Form */
 form.create-note {

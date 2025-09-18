@@ -24,6 +24,7 @@ function Note(props) {
       <p>{props.content}</p>
 
       <div className="note-footer">
+        <div className="note-buttons">
         <button onClick={handleDelete}>
           <DeleteIcon />
         </button>
@@ -31,6 +32,7 @@ function Note(props) {
         <button className='recommendations' onClick={handleToggle}>
           {props.isExpanded ? "Hide Recommendations" : "Show Recommendations"}
         </button>
+        </div>
       </div>
 
       {/* Recommendations rendered inside the Note component */}
