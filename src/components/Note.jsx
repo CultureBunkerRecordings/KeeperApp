@@ -29,7 +29,7 @@ function Note(props) {
           <DeleteIcon />
         </button>
 
-        <button className='recommendations' onClick={handleToggle}>
+        <button onClick={handleToggle}>
           {props.isExpanded ? "Hide Recommendations" : "Show Recommendations"}
         </button>
         </div>

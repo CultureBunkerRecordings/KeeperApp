@@ -101,7 +101,7 @@ footer p {
 
 .note .note-buttons {
   display: flex;           /* place buttons in a row */
-  justify-content: flex-end; /* align to the right */
+  justify-content: flex-start; /* align to the left */
   gap: 8px;                /* spacing between delete + recommendations */
   margin-bottom: 6px;      /* small spacing from title/content if needed */
 }
@@ -117,16 +117,8 @@ footer p {
   background: transparent;  /* keep button background same as before */
 }
 
-.note button.recommendations {
-  min-width: 120px;
-  height: auto;
-  padding: 6px 12px;
-  font-size: 0.85rem;
-  line-height: 1.2;
-  text-align: center;
-  white-space: normal;    /* allow wrapping */
-  border-radius: 6px;
-  background-color: transparent;
+.note .note-buttons button:first-child {
+  margin-top: 8px; /* adjust as needed */
 }
 
 .note button.recommendations:hover {
