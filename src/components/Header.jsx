@@ -25,8 +25,11 @@ function Header(props) {
       <h1>
         {" "}
         <HighlightIcon />
-        Keeper
+        ID8
       </h1>
+      <p>
+        “We write to taste life twice, in the moment and in retrospect.” ― Anaïs Nin
+      </p>
       {props.isLogin ? <button onClick={handleLogout}><ExitToApp /></button> : null}
     </header>
   );

@@ -64,6 +64,10 @@ header button svg {
   font-size: 18px;            /* scale the LogoutIcon */
 }
 
+header p {
+  color: #eee;
+}
+
 /* ✅ Updated Footer: Remove absolute positioning */
 footer {
   text-align: center;
