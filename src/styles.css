@@ -112,33 +112,30 @@ footer p {
 }
 
 .note button.recommendations {
-  display: inline-block;       /* keep button inline but allow sizing */
-  max-width: 100%;             /* never exceed container width */
-  padding: 8px 12px;           /* comfortable padding */
-  font-size: 0.9rem;           /* slightly smaller font to fit text */
-  white-space: nowrap;          /* keep text on a single line */
-  overflow: hidden;            /* hide any overflow */
-  text-overflow: ellipsis;     /* show "..." if text is too long */
-  text-align: center;          /* center text */
-  border: none;                /* optional: remove border if needed */
-  border-radius: 6px;          /* rounded corners */
-  background-color: #1976d2;   /* your preferred color */
-  color: #fff;                 /* text color */
+  position: relative;
+  float: right;
+  margin-right: 10px;
+  color: #f5ba13;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  outline: none;
+
+  /* Make it bigger to fit text nicely */
+  min-width: 120px;       /* enough for "Show Recommendations" */
+  height: auto;           /* let height grow if needed */
+  padding: 6px 12px;      /* inner spacing for readability */
+  font-size: 0.85rem;     /* slightly smaller text to fit */
+  line-height: 1.2;       /* tighter line spacing */
+  text-align: center;     
+  white-space: normal;    /* allow wrapping to new line */
+  border-radius: 6px;     /* keep some rounded corners */
+  background-color: transparent; /* keep original style transparent */
 }
 
 .note button.recommendations:hover {
-  background-color: #115293;   /* darker on hover */
+  color: #f7c74d;         /* slightly lighter on hover */
 }
 
-/* Optional: make font slightly smaller on very small screens */
-@media (max-width: 400px) {
-  .note button.recommendations {
-    font-size: 0.8rem;
-    padding: 6px 10px;
-  }
-}
 
 /* Create Note Form */
 form.create-note {
