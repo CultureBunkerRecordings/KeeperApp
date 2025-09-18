@@ -27,6 +27,7 @@ function Header(props) {
         <HighlightIcon />
         ID8
       </h1>
+      <h4>Notes</h4>
       <p>
         “We write to taste life twice, in the moment and in retrospect.” ― Anaïs Nin
       </p>

@@ -38,10 +38,12 @@ header {
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
 }
 
-header h1 {
+header h1, h4 {
   color: #fff;
   font-family: "McLaren", cursive;
   font-weight: 200;
+  display: inline;
+  padding: 10px;
 }
 
 header button {
@@ -62,6 +64,7 @@ header button {
 
 header button svg {
   font-size: 18px;            /* scale the LogoutIcon */
+  margin-top: auto;
 }
 
 header p {
