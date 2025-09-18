@@ -118,7 +118,7 @@ footer p {
 }
 
 .note .note-buttons button:first-child {
-  margin-top: 8px; /* adjust as needed */
+  margin-top: 2px; /* adjust as needed */
 }
 
 .note button.recommendations:hover {
