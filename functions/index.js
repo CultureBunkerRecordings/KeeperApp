@@ -6,7 +6,7 @@ const OpenAI = require("openai");
 const { Pinecone } = require("@pinecone-database/pinecone");
 
 const app = express();
-app.use(cors({ origin: ["https://culturebunker-keeper.vercel.app", "http://localhost:3000"] }));
+app.use(cors({ origin: ["https://id8notes.vercel.app", "http://localhost:3000"] }));
 app.use(express.json());
 
 
