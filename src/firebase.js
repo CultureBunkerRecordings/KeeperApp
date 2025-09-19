@@ -19,7 +19,7 @@ export const app = initializeApp(firebaseConfig);
 
 // Initialize App Check (optional for now)
 initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider("6LegwMgrAAAAAEvFvQww_etqbxeNL1qTH0BNW62D"), // your site key
+  provider: new ReCaptchaV3Provider("6Lfig84rAAAAAByJtrRSspfaik-LreUXhbQdUWH7"), // your site key
   isTokenAutoRefreshEnabled: true,
 });
 
